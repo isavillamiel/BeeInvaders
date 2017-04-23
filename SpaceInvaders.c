@@ -193,7 +193,8 @@ int main(void){
   Random_Init(1);
 
   Output_Init();
-  ST7735_FillScreen(0x0000);            // set screen to black
+  ST7735_FillScreen(0xED00);            // set screen to blue
+	
   
   ST7735_DrawBitmap(52, 159, PlayerShip0, 18,8); // player ship middle bottom
   ST7735_DrawBitmap(53, 151, Bunker0, 18,5);
