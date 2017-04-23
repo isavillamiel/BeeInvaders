@@ -1,6 +1,6 @@
 ; LCD.s
-; Student names: change this to your names or look very silly
-; Last modification date: change this to the last modification date or look very silly
+; Student names: Tiffany Jeong & Isabelle Villamiel
+; Last modification date: 4/23/2017
 
 ; Runs on LM4F120/TM4C123
 ; Use SSI0 to send an 8-bit code to the ST7735 160x128 pixel LCD.
@@ -18,7 +18,9 @@
 ; RESET (pin 3) connected to PA7 (GPIO)
 ; VCC (pin 2) connected to +3.3 V
 ; Gnd (pin 1) connected to ground
-
+DC                      EQU   0x40004100
+DC_COMMAND              EQU   0
+DC_DATA                 EQU   0x40
 GPIO_PORTA_DATA_R       EQU   0x400043FC
 SSI0_DR_R               EQU   0x40008008
 SSI0_SR_R               EQU   0x4000800C
@@ -62,8 +64,24 @@ writecommand
 ;4) Write the command to SSI0_DR_R
 ;5) Read SSI0_SR_R and check bit 4, 
 ;6) If bit 4 is high, loop back to step 5 (wait for BUSY bit to be low)
-
-    
+waitLo	LDR R1,=SSI0_SR_R
+		LDR R2, [R1]
+		AND R2, #0x10
+		CMP R2, #0x10
+		BEQ waitLo
+		
+		LDR R1,=DC
+		MOV R2, #0
+		STR R2, [R1]
+		
+		LDR R1,=SSI0_DR_R
+		STR R0,[R1]
+		
+waitHi	LDR R1,=SSI0_SR_R
+		LDR R2, [R1]
+		AND R2, #0x10
+		CMP R2, #0x10
+		BEQ waitHi
     
     BX  LR                          ;   return
 
@@ -76,9 +94,19 @@ writedata
 ;2) If bit 1 is low loop back to step 1 (wait for TNF bit to be high)
 ;3) Set D/C=PA6 to one
 ;4) Write the 8-bit data to SSI0_DR_R
-
+loloop	LDR R1, =SSI0_SR_R
+		LDR R2, [R1]
+		AND R2, #0x01
+		CMP R2, #0x01
+		BNE loloop
     
+		LDR R1,=DC
+		MOV R2, #0x40 
+		STR R2, [R1]
     
+		LDR R1, =SSI0_DR_R
+		STR R0, [R1]
+		
     BX  LR                          ;   return
 
 
