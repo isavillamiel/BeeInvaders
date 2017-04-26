@@ -293,43 +293,34 @@ void SysTick_Init(unsigned long period){
 
 
 
-
-
 int32_t ADCMail; 
 int32_t ADCStatus = 0;
 
-
+volatile unsigned long seed;
 
 int main(void){
 	void DisableInterrupts(void);
   TExaS_Init();  // set system clock to 80 MHz
 	ADC_Init();
-	//ST7735_InitR(INITR_REDTAB);
-	int seed;
-	Random_Init(seed);
-	SysTick_Init(1000000);
-  Output_Init();
 	
+  Output_Init();
+	Random_Init(seed);
 //	start();
 	
 	ST7735_FillScreen(0xED00);            // set screen to blue
   ST7735_DrawBitmap(0, 20, scorepiece, 128,21); // score piece
 	ST7735_DrawBitmap(105, 14, pausebutton, 25,12); // for decoration
- 
+	SysTick_Init(10000);
 	newPlat();
 	print_plat();	
 	
-	void EnableInterrupts(void);  
+	void EnableInterrupts(void); 
+
 }
 
 
 void SysTick_Handler(void){
 	ADCMail = ADC_In();
-	//ADCStatus = 1;
-	task_down();
 	pl_move();
-	
+	Timer0_Init(&task_down,15000000);
 }
-
-
-

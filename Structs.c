@@ -113,25 +113,27 @@ const unsigned short normPlatform[] = { // image - green platform
 
 
  
+
 const unsigned short* images[3] = {movingplat, breakplat, normPlatform};
 // ********STRUCTS*************
+
 typedef struct Pltype{ // struct for player 
 	int x;
 	int y; 
 	const unsigned short* player;
 }player1;
 
+
 player1 playa[1]={	// player 1 stats 
 	{52, 159, player}
 };
 
+
 typedef struct Ptype{	// struct for platforms
-	
 	 int x;			// x 
 	 int y;			// y
 	 const unsigned short* image; //
-	 int exist; 	// boolean true or false if it's there
-	 
+	 int exist; 	// boolean true or false if it's there 
  } platform;
 
 
@@ -140,12 +142,10 @@ platform platforms[5] = { // different platforms
 	{ 0, 0, breakplat, 0},	
 	{ 0, 0, normPlatform, 0},
 	{ 0, 0, normPlatform, 0},
-	{ 0, 0, normPlatform, 0}
-	
+	{ 0, 0, normPlatform, 0}	
  };
 
  
-
 //******PLATFORM_METHODS***********
  void newPlat(void){	// intializing new platforms
 	for(int i= 0; i<5; i++){
@@ -159,48 +159,44 @@ platform platforms[5] = { // different platforms
 }
  
 void print_plat(void){ // initial state of platforms
-	ST7735_DrawBitmap(25, 159, player, 17,16); // player ship middle bottom
-
 	for(int i = 0; i < 5; i++){
 		if(platforms[i].exist == 1){
 			ST7735_DrawBitmap(platforms[i].x, platforms[i].y, platforms[i].image, 25, 8);
 		}
-	
-			int a = 140;
+	int a = 140;
 	for(int i = 0; i < 5; i++){
-	if(platforms[i].image == movingplat){
-		while( a > 0){
-			a-=2;
-			Delay100ms(300);
-		ST7735_DrawBitmap(a, platforms[i].y,platforms[i].image, 25, 8);
-		}
-		while(a >= 0){
-			a+=2;
-			Delay100ms(1);
-		ST7735_DrawBitmap(a, platforms[i].y,platforms[i].image, 25, 8);
+		if(platforms[i].image == movingplat){
+			while( a > 0){
+				a-=2;
+				Delay100ms(300);
+				ST7735_DrawBitmap(a, platforms[i].y,platforms[i].image, 25, 8);
+			}
+			while(a >= 0){
+				a+=2;
+				Delay100ms(1);
+			ST7735_DrawBitmap(a, platforms[i].y,platforms[i].image, 25, 8);
+			}
 		}
 	}
 	}
-
-}
 }
 
 void task_down (void){ // shady
-		for(int i = 0; i < 5; i++){
-			int down = platforms[i].y;
-		if(platforms[i].exist == 1 && down != 168){
+	for(int i = 0; i < 5; i++){
+		int down = platforms[i].y;
+		if(platforms[i].exist == 1 && down != 160){
 			down++;
-			ST7735_DrawBitmap(platforms[i].x, down,platforms[i].image, 25, 8);	
-			}
+			Delay100ms(1);
+			ST7735_DrawBitmap(platforms[i].x, down ,platforms[i].image, 25, 8);	
 		}
+	}
 }  
 
 void scoring(void){	// incomplete scoring method 
 	int num = ((playa[1].y -160));
 	num = num * (-1); 
-		ST7735_SetCursor(130, 20);
-		LCD_OutDec(num);
-	
+	ST7735_SetCursor(130, 20);
+	LCD_OutDec(num);	
 }
 
 
@@ -208,8 +204,8 @@ void scoring(void){	// incomplete scoring method
 void pl_move(void){
 	int x = ADC_x(ADC_In());
 	ST7735_DrawBitmap(x, 159, player, 17, 16);
-	
 }
+
 //*******START_SCREEN*******
 const unsigned short DoodleNameWHITE[] = {
  0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
@@ -706,7 +702,6 @@ const unsigned short DoodleNameWHITEnRED[] = {
 
 void start(void){	//start screen
 	ST7735_FillScreen(0xED00);
-	
 	while(0){
 	ST7735_DrawBitmap(30, 120, player, 17, 16);
 	ST7735_DrawBitmap(0, 80, DoodleNameWHITE, 128, 30);
