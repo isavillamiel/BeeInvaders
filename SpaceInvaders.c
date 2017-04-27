@@ -53,8 +53,9 @@
 #include "Random.h"
 #include "TExaS.h"
 #include "ADC.h"
-#include "Structs.h" 
+#include "Struct.h" 
 #include "Timer0.h"
+
 
 void DisableInterrupts(void); // Disable interrupts
 void EnableInterrupts(void);  // Enable interrupts
@@ -290,7 +291,27 @@ void SysTick_Init(unsigned long period){
 }
 
 
-
+volatile uint32_t FallingEdges = 0;
+void EdgeCounter_Init(void){                          
+  SYSCTL_RCGCGPIO_R |= 0x00000020; // (a) activate clock for port F
+	while((SYSCTL_PRGPIO_R & 0x20) == 0){};
+  FallingEdges = 0;             // (b) initialize counter
+  GPIO_PORTF_DIR_R &= ~0x10;    // (c) make PF4 in (built-in button)
+  GPIO_PORTF_AFSEL_R &= ~0x10;  //     disable alt funct on PF4
+  GPIO_PORTF_DEN_R |= 0x10;     //     enable digital I/O on PF4   
+  GPIO_PORTF_PCTL_R &= ~0x000F0000; // configure PF4 as GPIO
+  GPIO_PORTF_AMSEL_R = 0;       //     disable analog functionality on PF
+  GPIO_PORTF_PUR_R |= 0x10;     //     enable weak pull-up on PF4
+  GPIO_PORTF_IS_R &= ~0x10;     // (d) PF4 is edge-sensitive
+  GPIO_PORTF_IBE_R &= ~0x10;    //     PF4 is not both edges
+  GPIO_PORTF_IEV_R &= ~0x10;    //     PF4 falling edge event
+  GPIO_PORTF_ICR_R = 0x10;      // (e) clear flag4
+  GPIO_PORTF_IM_R |= 0x10;      // (f) arm interrupt on PF4 *** No IME bit as mentioned in Book ***
+  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; // (g) priority 5
+  NVIC_EN0_R |= 0x40000000;      // (h) enable interrupt 30 in NVIC
+  //EnableInterrupts();           // (i) Clears the I bit
+	
+}
 
 
 int32_t ADCMail; 
@@ -298,8 +319,10 @@ int32_t ADCStatus = 0;
 
 volatile unsigned long seed;
 
+
 int main(void){
-	void DisableInterrupts(void);
+	
+	DisableInterrupts();
   TExaS_Init();  // set system clock to 80 MHz
 	ADC_Init();
 	
@@ -310,17 +333,28 @@ int main(void){
 	ST7735_FillScreen(0xED00);            // set screen to blue
   ST7735_DrawBitmap(0, 20, scorepiece, 128,21); // score piece
 	ST7735_DrawBitmap(105, 14, pausebutton, 25,12); // for decoration
-	SysTick_Init(10000);
-	newPlat();
-	print_plat();	
 	
-	void EnableInterrupts(void); 
+	EdgeCounter_Init();           // initialize GPIO Port F interrupt
+	SysTick_Init(1000000);
+	EnableInterrupts(); 
 
+	while(1){
+		newPlat();
+		print_plat();	
+	}
 }
 
 
 void SysTick_Handler(void){
 	ADCMail = ADC_In();
 	pl_move();
-	Timer0_Init(&task_down,15000000);
+	pl_jump();
+	//Timer0_Init(&task_down,15000000);
 }
+
+void GPIOPortF_Handler(void){
+  GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
+  FallingEdges = FallingEdges + 1;
+
+}
+
