@@ -151,7 +151,7 @@ typedef struct Pltype{ // struct for player
 
 
 player1 playa[1]={	// player 1 initial stats ... put in dimmensions of platforms and player as part of the struct to make it neater and for easier comparisons later                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	{52, 60, player,17,16}
+	{52, 160, player,17,16}
 };
 
 
@@ -164,10 +164,10 @@ typedef struct Ptype{	// struct for platforms
 	 int ydim;
  } platform;
 platform platforms[platnum] = { // info for first set of platforms... changes eventually
-	{ 20, 69, movingplat, 1,25,8},
+	{ 20, 75, movingplat, 1,25,8},
 	{ 31, 120, breakplat, 1,25,8},	
-	{ 5, 75, movingplat, 0,25,8},
-	{ 60, 130, movingplat, 1,25,8},
+	{ 5, 51, movingplat, 1,25,8},
+	{ 120, 130, movingplat, 1,25,8},
 	{ 110, 110, breakplat, 1,25,8}	
  };
 //*******PLAY_METHODS*******
@@ -175,7 +175,7 @@ void pl_move(void){ // complete
 	int a = ADC_x(ADC_In());
 	if (a < playa[0].x){
 	playa[0].player = player;
-	ST7735_DrawBitmap(a, 159, playa[0].player, 17, 16);
+	ST7735_DrawBitmap(a, playa[0].y, playa[0].player, 17, 16);
 	}
 	if (a > playa[0].x){
 	playa[0].player = playerflip; 
@@ -244,27 +244,30 @@ int b = playa[0].y;
 }
  
 //******PLATFORM_METHODS***********
- 
+ void Drawplat(uint32_t input){
+	ST7735_DrawBitmap(platforms[input].x, platforms[input].y, platforms[input].image, 25, 8);
+ }
 uint32_t check_plat(void){ // checks if there are platforms that exist
 	int check = 0;
 	for(int i = 0; i <platnum; i++){
 		if(platforms[i].y +25 == 160) { 
 			platforms[i].exist = 0;
+			check--;
 			}
 		if(platforms[i].exist){
 			check++;
 		}
 	}
-	if(check != 0){
-		check = 1;
-	}
+//	if(check != 0){
+//		check = 1;
+//	}
 	return (check);
 
 	}
 
  void newplat_init(void){
-	 if(check_plat() == 0){
-  for(int i = 0; i < platnum; i++){
+	 if(check_plat() < 2){ //only if its less than 4 platforms does it create new ones
+  for(int i = 0; i < platnum-check_plat(); i++){
     if(!platforms[i].exist){    // if the platform doesn't already exist
       platforms[i].exist = 1;
       platforms[i].x = Random()%128;
@@ -298,29 +301,55 @@ uint32_t check_plat(void){ // checks if there are platforms that exist
 	 }
 
 void side_task(void){
-	//while(playa[0].y > 60){
-	for(int i = 0; i < platnum; i++){
-	if(platforms[i].exist==1 &&  platforms[i].image == movingplat){
-		int a = platforms[i].x; 
-		while(a < 103){
-			a++;
-			ST7735_DrawBitmap(a, platforms[i].y, platforms[i].image, platforms[i].xdim, platforms[i].ydim);
-			Delay100ms(1);
+	
+	static int dir[5]={0, 0, 0, 1, 0};  // clouds: 0 2 3
+
+	for(int counter = 50; counter != 0; counter--){
+		Delay100ms(1);
+	if(platforms[0].exist){ 
+		if(dir[0] ==0){
+			platforms[0].x++;
+			Drawplat(0);
 		}
-		if(a==103) {
-			while(a > 0){
-		a--;
-		ST7735_DrawBitmap(a, platforms[i].y, platforms[i].image, platforms[i].xdim, platforms[i].ydim);
-		if(a == 0) {
-		platforms[i].exist =0;
-		}
-				Delay100ms(1);
+		else {
+			platforms[0].x--;
+			Drawplat(0);
 		}
 	}
+	if(platforms[2].exist){
+		if(dir[1] == 0){
+		platforms[2].x++;
+		Drawplat(2);
 	}
+		else {
+		platforms[2].x--;
+		Drawplat(2);
+		}
+	}
+	if(platforms[3].exist){
+		if(dir[2]==0){
+		platforms[3].x++;
+		Drawplat(3);
+	}
+		else {
+		platforms[3].x--;
+		Drawplat(3);
+		}
+	}
+	
+	}
+// to change the direction of the clouds
+	for(int count = 0; count!= platnum; count++){
+		if(platforms[count].x==0){
+			dir[count] = dir[count]+1;
+		}
+			else if(platforms[count].x==103){
+			dir[count] = 0;
+			}
+		}		
+	//}
 }
-	}
-void task_down (void){ // shady -- using Timer2
+void task_down (void){ // shady 
 	if(playa[0].y <= 60){
 	for(int i = 0; i < platnum-1; i++){
 		int down = platforms[i].y;
@@ -350,10 +379,10 @@ enum state {
 
 // assuming userinput is y axis of player
 void Screen1 (uint32_t userinput){
-	int state;
+	int state = State_Idle;
   switch (state) {
     case State_Idle:
-    if ((userinput <= 155 && userinput > 60) || userinput ==0){
+    if (userinput > 75){
       side_task(); //clouds move side to side
       state = State_Idle;
     }
@@ -361,7 +390,7 @@ void Screen1 (uint32_t userinput){
       state = State_Moving;
     }
     case State_Moving:
-    if (userinput <= 60){
+    if (userinput <= 75){
       task_down(); // moves player and platforms down
                    // resets userinput&player(y) = 155
       state = State_Idle;
