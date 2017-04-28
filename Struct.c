@@ -5,7 +5,9 @@
 #include "Print.h"
 #include "ADC.h"
 
-extern 
+#define platnum 	5
+#define blue 			0xED00
+
 
 void Delay100ms(uint32_t count){
 	uint32_t volatile time;
@@ -58,6 +60,51 @@ const unsigned short playerflip[] = { //image for player looking right
  0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
 };
 
+const unsigned short playerup[] = { // image player up
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0x0000, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xCD91, 0x28A0, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xB596, 0x8C51, 0x0820, 0x49C5, 0xC5B4, 0xCDD4, 0xD5F5, 0x1040, 0xED00, 0xB57D, 0xD614, 0xED00, 0xED00,
+ 0xED00, 0x8BCD, 0x730A, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD71, 0xCD72, 0xCD92, 0x5A27, 0x18A1, 0xCD71, 0xED00,
+ 0xED00, 0xE656, 0x3122, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xC551, 0xCD92, 0xD5D3, 0x1881, 0xED00,
+ 0xED00, 0x1020, 0xC552, 0xCD92, 0xC530, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xC552, 0xCD72, 0xC551, 0xCD71, 0x0820, 0xED00, 0xED00,
+ 0xED00, 0xCDD4, 0x1041, 0xCD72, 0xD572, 0xCD91, 0xCD91, 0xCD71, 0xBD72, 0xCD93, 0xC571, 0xCD72, 0xCDB3, 0xD5F5, 0xED00, 0xED00,
+ 0xED00, 0xA46E, 0xCD72, 0xCD93, 0xFFFF, 0xFFFF, 0xFFFF, 0x6EBB, 0x6EDB, 0x76BB, 0x7EBB, 0xC591, 0xD5B2, 0x49C6, 0xED00, 0xED00,
+ 0xED00, 0xBD11, 0x0000, 0xDE78, 0xFFFF, 0xFFFF, 0x0841, 0x76BB, 0x86DC, 0x0061, 0x7EBB, 0xD5D4, 0xCD92, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0x2124, 0xD5D4, 0xC594, 0xFFFF, 0xFFFF, 0x0001, 0x6EDB, 0x6EDB, 0x0062, 0x76BB, 0x3163, 0x0000, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0x18A1, 0xED00, 0xC572, 0xD5B4, 0xD593, 0x3964, 0x96FC, 0x6EDB, 0x769A, 0x0000, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x1041, 0x76DB, 0x0800, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0860, 0x6EDB, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0821, 0x6EBB, 0x5AEB, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0000, 0xAF3D, 0x0841, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0000, 0x0000, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+
+
+};
+
+
+const unsigned short playerdown[] = {
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0000, 0x0000, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0000, 0xAF3D, 0x0841, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0821, 0x6EBB, 0x5AEB, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x0860, 0x6EDB, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x1041, 0x76DB, 0x0800, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0x18A1, 0xED00, 0xC572, 0xD5B4, 0xD593, 0x3964, 0x96FC, 0x6EDB, 0x769A, 0x0000, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0x2124, 0xD5D4, 0xC594, 0xFFFF, 0xFFFF, 0x0001, 0x6EDB, 0x6EDB, 0x0062, 0x76BB, 0x3163, 0x0000, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xBD11, 0x0000, 0xDE78, 0xFFFF, 0xFFFF, 0x0841, 0x76BB, 0x86DC, 0x0061, 0x7EBB, 0xD5D4, 0xCD92, 0xED00, 0xED00, 0xED00,
+ 0xED00, 0xA46E, 0xCD72, 0xCD93, 0xFFFF, 0xFFFF, 0xFFFF, 0x6EBB, 0x6EDB, 0x76BB, 0x7EBB, 0xC591, 0xD5B2, 0x49C6, 0xED00, 0xED00,
+ 0xED00, 0xCDD4, 0x1041, 0xCD72, 0xD572, 0xCD91, 0xCD91, 0xCD71, 0xBD72, 0xCD93, 0xC571, 0xCD72, 0xCDB3, 0xD5F5, 0xED00, 0xED00,
+ 0xED00, 0x1020, 0xC552, 0xCD92, 0xC530, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xC552, 0xCD72, 0xC551, 0xCD71, 0x0820, 0xED00, 0xED00,
+ 0xED00, 0xE656, 0x3122, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xC551, 0xCD92, 0xD5D3, 0x1881, 0xED00,
+ 0xED00, 0x8BCD, 0x730A, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD72, 0xCD71, 0xCD72, 0xCD92, 0x5A27, 0x18A1, 0xCD71, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xB596, 0x8C51, 0x0820, 0x49C5, 0xC5B4, 0xCDD4, 0xD5F5, 0x1040, 0xED00, 0xB57D, 0xD614, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0x0000, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xCD91, 0x28A0, 0xED00, 0xED00,
+ 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
+
+};
+
+
 const unsigned short movingplat[] = {	// image- clouds
  0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
  0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
@@ -93,156 +140,349 @@ const unsigned short breakplat[] = { // image - broken platform
 
 };
 
-const unsigned short normPlatform[] = { // image - green platform
- 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
- 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
- 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
- 0xED00, 0xED00, 0xED00, 0xED00, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x25ED,
- 0x2DCC, 0x25ED, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x15EE, 0x15EE, 0x15EE,
- 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x25ED, 0x2DCD, 0x15EE, 0x15EE, 0x15EE, 0x15EE,
- 0x15EE, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE,
- 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x15EE,
- 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE,
- 0x15EE, 0x15EE, 0x15EE, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0x2DCC, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE,
- 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0x15EE, 0xED00, 0xED00, 0xED00, 0xED00,
- 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
- 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00, 0xED00,
-
- };
  
 
-const unsigned short* images[3] = {movingplat, breakplat, normPlatform};
+const unsigned short* images[2] = {movingplat, breakplat};
+
 // ********STRUCTS*************
 
 typedef struct Pltype{ // struct for player 
 	int x;
 	int y; 
 	const unsigned short* player;
+	int xdim;	// dimmensions
+	int ydim;
 }player1;
 
 
-player1 playa[1]={	// player 1 stats 
-	{52, 159, player}
+player1 playa[1]={	// player 1 initial stats ... put in dimmensions of platforms and player as part of the struct to make it neater and for easier comparisons later                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+	{64, 160, player, 17, 16}
 };
 
-
-typedef struct Ptype{	// struct for platforms
+ typedef struct Ptype{	// struct for platforms
 	 int x;			// x 
 	 int y;			// y
 	 const unsigned short* image; //
 	 int exist; 	// boolean true or false if it's there 
+	 int xdim;	// dimensions 
+	 int ydim;
  } platform;
+ 
 
-platform normal[1] = {
-	{50, 80, normPlatform, 1}
-};
-
-platform platforms[5] = { // different platforms
-	{ 0, 0, movingplat, 0},
-	{ 0, 0, breakplat, 0},	
-	{ 0, 0, normPlatform, 0},
-	{ 0, 0, normPlatform, 0},
-	{ 0, 0, normPlatform, 0}	
+platform platforms[platnum] = { // info for first set of platforms... changes eventually
+	{ 20, 75, movingplat, 1,25,8},
+	{ 31, 120, breakplat, 1,25,8},	
+	{ 80, 51, movingplat, 1,25,8},
+	{ 1, 130, movingplat, 1,25,8},
+	{ 110, 110, breakplat, 1,25,8}	
  };
 
  
-//******PLATFORM_METHODS***********
- void newPlat(void){	// intializing new platforms
-	for(int i= 0; i<5; i++){
-		if (!platforms[i].exist){
-			platforms[i].exist = 1; 
-			platforms[i].x = Random()%100;
-			platforms[i].y = Random()%80;
-			platforms[i].image = images[Random()%4];
+
+ //******PLATFORM_METHODS***********
+uint32_t gameover(void){
+	int game = 0;
+	return(game);
+	ST7735_FillScreen(0xFFFF);
+	ST7735_SetCursor(30, 75);
+	ST7735_OutString("Game Over");
+	game++;
+	//return(game);
+}
+ void Drawplat(uint32_t input){
+	ST7735_DrawBitmap(platforms[input].x, platforms[input].y, platforms[input].image, 25, 8);
+ }
+uint32_t check_plat(void){ // checks if there are platforms that exist
+	int check = 0;
+	for(int i = 0; i <platnum; i++){
+		if(platforms[i].y +25 == 160) { 
+			platforms[i].exist = 0;
+			check--;
+			}
+		if(platforms[i].exist){
+			check++;
 		}
 	}
-}
+//	if(check != 0){
+//		check = 1;
+//	}
+	return (check);
+
+	}
  
-void print_plat(void){ // initial state of platforms
-	
-	ST7735_DrawBitmap(normal[1].x, normal[1].y, normPlatform, 25,8);
-
-	
-	for(int i = 0; i < 5; i++){
+void newplat_init(void){
+	 if(check_plat() < platnum){ //only if its less than 4 platforms does it create new ones
+  for(int i = 0; i < platnum-check_plat(); i++){
+    if(!platforms[i].exist){    // if the platform doesn't already exist
+      platforms[i].exist = 1;
+      platforms[i].x = Random()%128;
+      platforms[i].y = Random()%160+3;
+      while(platforms[i].y < 30 || platforms[i].y > 150){
+        platforms[i].y = Random()%160;
+      }
+    }
+  }
+// this method checks if any platform is next to each other
+// they shouldn't be
+  int a = 0;  
+  while(a != platnum){
+    for(int i = 0; i < platnum; i++){
+      if(platforms[a].y == platforms[i].y){
+        platforms[a].y = Random()%160+5; 
+      }
+      while((platforms[a].y < 30 || platforms[a].y > 150) && platforms[a].y == platforms[i].y){
+        platforms[a].y = Random()%160;
+      }
+		if(platforms[a].x == platforms[i].x){
+        platforms[a].x = (Random()%160)-10; 
+      }
+      while(platforms[a].x > 131){
+        platforms[a].x = Random()%160;
+      }
+    }
+    a++; 
+  }
+}
+	for(int i = 0; i < platnum; i++){
 		if(platforms[i].exist == 1){
-			ST7735_DrawBitmap(platforms[i].x, platforms[i].y, platforms[i].image, 25, 8);
+			Drawplat(i);
+			Delay100ms(1);
 		}
-	int a = 140;
-	for(int i = 0; i < 5; i++){
-		if(platforms[i].image == movingplat){
-			while( a > 0){
-				a-=2;
-				Delay100ms(300);
-				ST7735_DrawBitmap(a, platforms[i].y,platforms[i].image, 25, 8);
-			}
-			while(a >= 0){
-				a+=2;
-				Delay100ms(1);
-			ST7735_DrawBitmap(a, platforms[i].y,platforms[i].image, 25, 8);
-			}
-		}
-	}
 	}
 }
+	
 
-void task_down (void){ // shady
-	for(int i = 0; i < 5; i++){
+void task_down (void){ // shady 
+	if(playa[0].y <= 60){
+	for(int i = 0; i < platnum-1; i++){
 		int down = platforms[i].y;
-		if(platforms[i].exist == 1 && down != 160){
-			down++;
-			Delay100ms(1);
+		if(platforms[i].exist == 1){
+			while (down != down+60-8){
+				down++;
 			ST7735_DrawBitmap(platforms[i].x, down ,platforms[i].image, 25, 8);	
+				Delay100ms(1);
+			
+				if(platforms[i].x +25 == 160) { 
+					platforms[i].exist = 0;
+				
+				}
 		}
 	}
 }  
+	}
+} 
 
-void scoring(void){	// incomplete scoring method 
-	int num = ((playa[1].y -160));
-	num = num * (-1); 
-	ST7735_SetCursor(130, 20);
-	LCD_OutDec(num);	
-}
+void side_task(void){
+	
+	static int dir[5]={0, 0, 0, 1, 0};  // clouds: 0 2 3
 
-
-//*******PLAY_METHODS*******
-void pl_move(void){
-	int x = ADC_x(ADC_In());
-	ST7735_DrawBitmap(x, 159, player, 17, 16);
-}
-
-void pl_jump(void){	 
-	int upcount = 0;
-	int downcount = 5;
-//	for(int i = 0; i < 5; i++){
-//		if(platforms[i].exist == 1){
-//			if(playa[1].y > platforms[i].y){
-//				while(playa[1].y != platforms[i].y - 8){
-//						playa[1].y = (playa[1].y) + 1;
-//						ST7735_DrawBitmap(playa[1].x, playa[1].y, player, 17, 16);
-//						Delay1ms(1);
-//			}
-//		}
-//	}
-			while(upcount < 35){
-				playa[1].y = (playa[1].y) - 1;
-				ST7735_DrawBitmap(playa[1].x, playa[1].y, player, 17, 16);
-				Delay1ms(1);
-				upcount++;
+	for(int counter = 50; counter != 0; counter--){
+		Delay100ms(1);
+	if(platforms[0].exist){ 
+		if(dir[0] ==0){
+			platforms[0].x++;
+			Drawplat(0);
+		}
+		else {
+			platforms[0].x--;
+			Drawplat(0);
+		}
+	}
+	if(platforms[2].exist){
+		if(dir[1] == 0){
+		platforms[2].x++;
+		Drawplat(2);
+	}
+		else {
+		platforms[2].x--;
+		Drawplat(2);
+		}
+	}
+	if(platforms[3].exist){
+		if(dir[2]==0){
+		platforms[3].x++;
+		Drawplat(3);
+	}
+		else {
+		platforms[3].x--;
+		Drawplat(3);
+		}
+	}
+	
+	}
+// to change the direction of the clouds
+	for(int count = 0; count!= platnum; count++){
+		if(platforms[count].x==0){
+			dir[count] = dir[count]+1;
+		}
+			else if(platforms[count].x==103){
+			dir[count] = 0;
 			}
-	while(playa[1].y !=  160){
-		for(int i = 0; i < 5; i++){
-			if(platforms[i].exist == 1){
-				if(playa[1].y == platforms[i].y){
-					playa[1].y = platforms[i].y - 8;
+		}		
+	//}
+}
+
+typedef struct user_state{ // struct for user input FSM
+	 uint32_t x; // x value of player
+	 uint32_t y; // y value of player
+}user1;
+user1 play_stats[1] = {
+	{0, 0}
+};
+
+void plstats(void){
+	int a = ADC_x(ADC_In());
+	int b = 160;
+	playa[0].x = a;
+	playa[0].y = b; // b = the constant jumping of doodle.... must get from tiffany
+}
+
+uint32_t pl_y(void){
+int b = playa[0].y;
+	return (b); 
+}
+
+#define Idle 0
+#define Screen 1
+
+enum state{
+  State_Idle,
+  State_Moving
+};
+
+
+void break_jump(int i){
+	int once = 0;
+	int upcount = 0;
+	int jumpup = 0;
+	
+	while(jumpup < 40){ // going up
+		playa[0].y = playa[0].y - 1;
+		ST7735_DrawBitmap(playa[0].x, playa[0].y, player, 17, 16);
+		Delay1ms(40);
+		jumpup++;
+	}
+	while(playa[0].y != (platforms[i].y - 8)){ // going down
+		playa[0].y = (playa[0].y) + 1;
+		ST7735_DrawBitmap(playa[0].x, playa[0].y, player, 17, 16);
+		Delay1ms(40);
+	}
+	once++;
+	while(upcount < 5){ // going up
+		playa[0].y = playa[0].y - 1;
+		ST7735_DrawBitmap(playa[0].x, playa[0].y, player, 17, 16);
+		Delay1ms(75);
+		upcount++;
+	}
+	while(playa[0].y != 165){
+		playa[0].y = playa[0].y + 1;
+		ST7735_DrawBitmap(playa[0].x, playa[0].y, player, 17, 16);
+		Delay1ms(40);
+	}
+	gameover();
+	
+	}
+
+	
+void moving_jump(int i){
+//	while(playa[0].y != platforms[i].y - 8){ // after this, character is on the platform
+//		playa[0].y = (playa[0].y) + 1;
+//		ST7735_DrawBitmap(playa[0].x, playa[0].y, player, 17, 16);
+//		Delay1ms(40);
+//	}
+	int noplatup = 0;
+	int noplatd = 0;
+	while(noplatup < 40){ // going up
+		playa[0].y = playa[0].y - 1;
+		ST7735_DrawBitmap(playa[0].x, playa[0].y, player, 17, 16);
+		Delay1ms(75);
+		noplatup++;
+	}
+		while(noplatd != 40){ // checking to see if it's on the platform as coming down
+			playa[0].y = (playa[0].y) + 1;
+			ST7735_DrawBitmap(playa[0].x, playa[0].y, player, 17, 16);
+			Delay1ms(40);
+			noplatd++;	
+			if((platforms[i].y - playa[0].y) <= 5){ // check if it's on top of a platform y pixel
+				if((platforms[i].x <= playa[0].x) && (playa[0].x <= (platforms[i].x + 25))){ // make sure it's within the platform width
+					break;
 				}
 			}
 		}
-		playa[1].y = (playa[1].y) + 1;
-		ST7735_DrawBitmap(playa[1].x, playa[1].y, player, 17, 16);
-		Delay1ms(1);
-		//upcount--;
-	}		
+	}
+
+
+void pl_jump(void){	
+	int noplatup = 0;
+	int noplatd = 0;
+	int jump = 0;
+	int upcount = 0;
+	int once = 0;
+	
+	for(int i = 0; i < 5; i++){
+		if(platforms[i].exist == 1){
+			if(platforms[i].image == breakplat){
+				break_jump(i);
+			}
+			else{
+				moving_jump(i);
+			}
+		}
+	}
+}	
+
+
+
+// assuming userinput is y axis of player
+void Screen1 (uint32_t userinput){
+	int state = State_Idle;
+  switch (state) {
+    case State_Idle:
+    if (userinput > 90){
+      side_task(); //clouds move side to side
+      state = State_Idle;
+    }
+    else{
+      state = State_Moving;
+    }
+    case State_Moving:
+    if (userinput <= 90){
+      task_down(); // moves player and platforms down
+                   // resets userinput&player(y) = 155
+      state = State_Idle;
+    }
+    
+  }
+  }
+
+void print_plat(void){ // initial state of platforms
+	check_plat();
+	newplat_init();
+	pl_jump();
+	Screen1(pl_y());
+	//pl_jump();
+}	
+	
+
+//*******PLAY_METHODS*******	
+	
+void pl_move(void){ // complete
+	int a = ADC_x(ADC_In());
+	if (a < playa[0].x){
+	playa[0].player = player;
+	ST7735_DrawBitmap(a, playa[0].y, playa[0].player, 17, 16);
+	}
+	if (a > playa[0].x){
+	playa[0].player = playerflip; 
+		if(a ==120){
+		a = a-20;
+		}
+	playa[0].x = a;
+	ST7735_DrawBitmap(playa[0].x, playa[0].y, playa[0].player, 17, 16);
 }
+		playa[0].x = a;
+}
+
 
 //*******START_SCREEN*******
 const unsigned short DoodleNameWHITE[] = {
@@ -735,23 +975,44 @@ const unsigned short DoodleNameWHITEnRED[] = {
 
 
 };
-
-
-
 void start(void){	//start screen
+
 	ST7735_FillScreen(0xED00);
-	while(0){
+	int counter = 5;
+	while(counter != 0){			
 	ST7735_DrawBitmap(30, 120, player, 17, 16);
+	ST7735_DrawBitmap(80, 137, playerup, 16, 17);
 	ST7735_DrawBitmap(0, 80, DoodleNameWHITE, 128, 30);
 	ST7735_DrawBitmap(100, 20, playerflip, 17, 16);
 	Delay100ms(4);
 	ST7735_DrawBitmap(100, 20, player, 17, 16);
+	ST7735_DrawBitmap(80, 137, playerdown, 16, 17);
 	ST7735_DrawBitmap(30, 120, playerflip, 17, 16);
 	ST7735_DrawBitmap(0, 80, DoodleNameWHITEnRED, 128, 30);
 	Delay100ms(4);
+		counter--;
 	}
 }
 
+void scoring(void){	// incomplete scoring method 
+	int num = ((playa[1].y -160));
+	num = num * (-1); 
+	ST7735_SetCursor(130, 20);
+	LCD_OutDec(num);	
+}	
 
+#define Idle 0
+#define Screen 1
 
-		
+typedef struct state1{
+	void (*output)(); 
+	void (*task)();
+	uint32_t Next_State[2];
+}background;
+
+background FSM[2] = {
+	// idle state
+{&side_task, &side_task, Idle, Screen},
+	// moving down state
+{&task_down, &task_down, Idle, Idle} 
+};
