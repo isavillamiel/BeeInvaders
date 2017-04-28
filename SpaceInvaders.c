@@ -316,8 +316,30 @@ void EdgeCounter_Init(void){
 
 int32_t ADCMail; 
 int32_t ADCStatus = 0;
-
 volatile unsigned long seed;
+
+void Timer2A_Init(unsigned long period){
+	unsigned long volatile delay;
+	SYSCTL_RCGCTIMER_R |= 0x04;		// 0) activate timer2
+	delay = SYSCTL_RCGCTIMER_R;
+//	TimerCount = 0;
+	TIMER2_CTL_R = 0x00000000;		// 1) disable timer2A
+	TIMER2_CFG_R = 0x00000000; 		// 2) 32-bit mode
+	TIMER2_TAMR_R = 0x00000002;		// 3) periodic mode
+	TIMER2_TAILR_R = period-1;		// 4) reload value
+	TIMER2_TAPR_R = 0;						// 5) clock resolution
+	TIMER2_ICR_R = 0x00000001;		// 6) clear timeout flag
+	TIMER2_IMR_R = 0x00000001;		// 7) arm timeout
+	NVIC_PRI5_R = (NVIC_PRI5_R&0x00FFFFFF) | 0x80000000; // 8) priority 4
+	NVIC_EN0_R = 1<<23;						// enable IRQ 23 in 
+	TIMER2_CTL_R = 0x00000001;		// 8) enable timer2A
+}
+//trigger is Timer2A time-out interrupt
+//set periodially TATORIS set on rollover 
+void Timer2A_Handler(void){
+	TIMER2_ICR_R = 0x00000001; 	//acknowledge
+	//print_plat();	
+}
 
 
 int main(void){
@@ -335,21 +357,21 @@ int main(void){
 	ST7735_DrawBitmap(105, 14, pausebutton, 25,12); // for decoration
 	
 	EdgeCounter_Init();           // initialize GPIO Port F interrupt
-	SysTick_Init(1000000);
+	SysTick_Init(500000);
+	//Timer2A_Init(1000000);
 	EnableInterrupts(); 
 
-	while(1){
-		newPlat();
+	while(gameover() != 1){
+		
 		print_plat();	
+		//pl_jump();
 	}
 }
 
 
-void SysTick_Handler(void){
+void SysTick_Handler(void){ // this prints out the character
 	ADCMail = ADC_In();
 	pl_move();
-	pl_jump();
-	//Timer0_Init(&task_down,15000000);
 }
 
 void GPIOPortF_Handler(void){
