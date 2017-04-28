@@ -151,7 +151,7 @@ typedef struct Pltype{ // struct for player
 
 
 player1 playa[1]={	// player 1 initial stats ... put in dimmensions of platforms and player as part of the struct to make it neater and for easier comparisons later                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
-	{52, 160, player,17,16}
+	{64, 160, player,17,16}
 };
 
 
@@ -166,12 +166,13 @@ typedef struct Ptype{	// struct for platforms
 platform platforms[platnum] = { // info for first set of platforms... changes eventually
 	{ 20, 75, movingplat, 1,25,8},
 	{ 31, 120, breakplat, 1,25,8},	
-	{ 5, 51, movingplat, 1,25,8},
-	{ 120, 130, movingplat, 1,25,8},
+	{ 80, 51, movingplat, 1,25,8},
+	{ 1, 130, movingplat, 1,25,8},
 	{ 110, 110, breakplat, 1,25,8}	
  };
 //*******PLAY_METHODS*******
-void pl_move(void){ // complete
+ 
+void pl_move(void){  // complete
 	int a = ADC_x(ADC_In());
 	if (a < playa[0].x){
 	playa[0].player = player;
@@ -181,7 +182,8 @@ void pl_move(void){ // complete
 	playa[0].player = playerflip; 
 		if(a ==120){
 		a = a-20;
-		}
+	
+	}
 	playa[0].x = a;
 	ST7735_DrawBitmap(playa[0].x, playa[0].y, playa[0].player, 17, 16);
 }
@@ -222,15 +224,6 @@ void pl_jump(void){	 // incomplete
 		//upcount--;
 	}		
 }
-
-typedef struct user_state{ // struct for user input FSM
-	 uint32_t x; // x value of player
-	 uint32_t y; // y value of player
-}user1;
-user1 play_stats[1] = {
-	{0, 0}
-};
-
 void plstats(void){
 	int a = ADC_x(ADC_In());
 	int b = 160;
@@ -243,14 +236,16 @@ int b = playa[0].y;
 	return (b); 
 }
  
+
 //******PLATFORM_METHODS***********
- void Drawplat(uint32_t input){
+
+void Drawplat(uint32_t input){
 	ST7735_DrawBitmap(platforms[input].x, platforms[input].y, platforms[input].image, 25, 8);
  }
 uint32_t check_plat(void){ // checks if there are platforms that exist
 	int check = 0;
 	for(int i = 0; i <platnum; i++){
-		if(platforms[i].y +25 == 160) { 
+		if((platforms[i].y +25 == 160) || platforms[i].x >= 128 || platforms[i].x < 0) { 
 			platforms[i].exist = 0;
 			check--;
 			}
@@ -265,8 +260,8 @@ uint32_t check_plat(void){ // checks if there are platforms that exist
 
 	}
 
- void newplat_init(void){
-	 if(check_plat() < 2){ //only if its less than 4 platforms does it create new ones
+void newplat_init(void){
+	 if(check_plat() < platnum){ //only if its less than 4 platforms does it create new ones
   for(int i = 0; i < platnum-check_plat(); i++){
     if(!platforms[i].exist){    // if the platform doesn't already exist
       platforms[i].exist = 1;
@@ -297,11 +292,16 @@ uint32_t check_plat(void){ // checks if there are platforms that exist
     }
     a++; 
   }
-}
+}	for(int i = 0; i < platnum; i++){
+		if(platforms[i].exist == 1){
+			Drawplat(i);
+			Delay100ms(1);
+			}	
+		}
+	 
 	 }
 
 void side_task(void){
-	
 	static int dir[5]={0, 0, 0, 1, 0};  // clouds: 0 2 3
 
 	for(int counter = 50; counter != 0; counter--){
@@ -371,14 +371,13 @@ void task_down (void){ // shady
 
 #define Idle 0
 #define Screen 1
-
 enum state {
   State_Idle,
   State_Moving
 };
 
 // assuming userinput is y axis of player
-void Screen1 (uint32_t userinput){
+void Screen1 (uint32_t userinput){ // complete
 	int state = State_Idle;
   switch (state) {
     case State_Idle:
@@ -387,7 +386,7 @@ void Screen1 (uint32_t userinput){
       state = State_Idle;
     }
     else{
-      state = State_Moving;
+     state = State_Moving;
     }
     case State_Moving:
     if (userinput <= 75){
@@ -403,12 +402,6 @@ void Screen1 (uint32_t userinput){
 	
 	void print_plat(void){ // initial state of platforms
 	check_plat();
-	for(int i = 0; i < platnum; i++){
-		if(platforms[i].exist == 1){
-			ST7735_DrawBitmap(platforms[i].x, platforms[i].y, platforms[i].image, 25, 8);
-			Delay100ms(1);
-			}	
-		}
 	newplat_init();
 	Screen1(pl_y());
 }
@@ -954,8 +947,8 @@ void scoring(void){	// incomplete scoring method
 
 
 
-#define Idle 0
-#define Screen 1
+
+
 
 typedef struct state1{
 	void (*output)(); 
