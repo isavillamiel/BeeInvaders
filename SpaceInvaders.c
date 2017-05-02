@@ -66,14 +66,18 @@ void SysTick_Init(unsigned long period){
   NVIC_ST_CTRL_R = 0;         // disable SysTick during setup
   NVIC_ST_RELOAD_R = period-1;// reload value
   NVIC_ST_CURRENT_R = 0;      // any write to current clears it 
-	NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x20000000; // priority 1  	
+	NVIC_SYS_PRI3_R = (NVIC_SYS_PRI3_R&0x00FFFFFF)|0x20000000; // priority 1  
   NVIC_ST_CTRL_R = 0x07; 			// enable SysTick with core clock and interrupts
 }
 volatile uint32_t FallingEdges = 0;
-void EdgeCounter_Init_F(void){  // GPIO PORT F init 
-
+void EdgeCounter_Init_F(void){volatile unsigned long delay;  // GPIO PORT F init 
   SYSCTL_RCGCGPIO_R |= 0x00000020; // (a) activate clock for port F
-    while((SYSCTL_PRGPIO_R & 0x20) == 0){};
+   //while((SYSCTL_PRGPIO_R & 0x20) == 0){};
+	delay = SYSCTL_RCGCGPIO_R;	// NOP 
+		 delay = SYSCTL_RCGCGPIO_R;	// NOP 
+		 delay = SYSCTL_RCGCGPIO_R;	// NOP 
+		 delay = SYSCTL_RCGCGPIO_R;	// NOP 
+	
   FallingEdges = 0;             // (b) initialize counter
   GPIO_PORTF_DIR_R &= ~0x10;    // (c) make PF4 in (built-in button)
   GPIO_PORTF_AFSEL_R &= ~0x10;  //     disable alt funct on PF4
@@ -88,11 +92,12 @@ void EdgeCounter_Init_F(void){  // GPIO PORT F init
   GPIO_PORTF_IM_R |= 0x10;      // (f) arm interrupt on PF4 *** No IME bit as mentioned in Book ***
   NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; // (g) priority 5
   NVIC_EN0_R |= 0x40000000;      // (h) enable interrupt 30 in NVIC
-}
+		}
+	
 void EdgeCounter_Init_E(void){  // GPIO PORT E init ******* this is the attack button
 
   SYSCTL_RCGCGPIO_R |= 0x00000010; // (a) activate clock for port E
-    while((SYSCTL_PRGPIO_R & 0x10) == 0){};
+   while((SYSCTL_PRGPIO_R & 0x10) == 0){};
   FallingEdges = 0;             // (b) initialize counter
   GPIO_PORTE_DIR_R &= ~0x10;    // (c) make PE4 in 
   GPIO_PORTE_AFSEL_R &= ~0x10;  //     disable alt funct on PE4
@@ -105,7 +110,7 @@ void EdgeCounter_Init_E(void){  // GPIO PORT E init ******* this is the attack b
   GPIO_PORTE_IEV_R &= ~0x10;    //     PE4 falling edge event
   GPIO_PORTE_ICR_R = 0x10;      // (e) clear flag4
   GPIO_PORTE_IM_R |= 0x10;      // (f) arm interrupt on PE4 *** No IME bit as mentioned in Book ***
-  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; // (g) priority 5
+  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; // (g) priority 5 
   NVIC_EN0_R |= 0x40000000;      // (h) enable interrupt 30 in NVIC
 }
 
@@ -113,9 +118,9 @@ int main(void){
 	
 	DisableInterrupts();
   TExaS_Init();  // set system clock to 80 MHz
-  SysTick_Init(1000000);
+  SysTick_Init(10000); // was 1000000
 	EdgeCounter_Init_F();
-	EdgeCounter_Init_E();
+	//EdgeCounter_Init_E();
 	Sound_Init(); // this calls DAC_Init
 	ADC_Init();
 
@@ -123,55 +128,40 @@ int main(void){
 	EnableInterrupts();
 	
   ST7735_FillScreen(0xEED3);            // set screen to blue
-  Delay100ms(50);              // delay 5 sec at 80 MHz
+	startscreen(GPIO_PORTF_DATA_R);
+  Delay100ms(1);              // delay 5 sec at 80 MHz
 	
 // main while loop	
-	uint32_t lvl3time = 0;
-	while(lvl3time != 30){
-//***********LEVEL 1**********
 		uint32_t lvl1time = 0;
 		while(lvl1time != 30){
-			Delay100ms(10); // 1 second count
+			flowers_draw();
+			beeprint();
+			//pollen_attack(); // move under port E handler
+
+			Delay100ms(10); // 1 second count = (10)
 			lvl1time++;	
-		}
-//***********LEVEL 2**********
-		uint32_t lvl2time = 0;
-		while(lvl2time != 30){
-			Delay100ms(10);
-			lvl2time++;
-		}
-//**********LEVEL 3*************
-		while(lvl3time != 30){
-			Delay100ms(10);
-			lvl3time++;
+	
 		}
 	}
-}
 
-************ISR*********//
-uint32_t ADCMail = 0;
+
+//************ISR*********//
+
 void SysTick_Handler(void){
-	ADCMail = ADC_In();
-	// this is for sound stuff****
-	index1 = (index1+1)&0x0F;      
-  DAC_Out(SineWave[index1]);    // output one value each interrupt
+	beemove();
 }
 
-void GPIOPortF_Handler(void){ // edge-triggered interrupt
+void GPIOPortF_Handler(void){ // ******START******
   GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
   FallingEdges = FallingEdges + 1;
-	if((GPIO_PORTF_DATA_R & 0x10) == 0x10){
-		gameover();// if this switch is on, pause the game
-	}
 }
-void GPIOPortE_Handler(void){ // edge-triggered interrupt *****ATTACK BUTTON*****
+void GPIOPortE_Handler(void){ // *****ATTACK BUTTON*****
   GPIO_PORTF_ICR_R = 0x10;      // acknowledge flag4
   FallingEdges = FallingEdges + 1;
-	if((GPIO_PORTE_DATA_R & 0x10) == 0x10){ // if this button is pressed, attack & make sound
-		attack();//----insert attack code
+	if((GPIO_PORTE_DATA_R & 0x10) == 0x10){ // if this button is pressed, attack & make sound	
+		pollen_attack();
 	}
 }
-
 void Delay100ms(uint32_t count){uint32_t volatile time;
   while(count>0){
     time = 727240;  // 0.1sec at 80 MHz
