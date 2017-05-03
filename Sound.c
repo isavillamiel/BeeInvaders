@@ -5,8 +5,18 @@
 // Jonathan Valvano
 // November 17, 2014
 #include <stdint.h>
+#include "tm4c123gh6pm.h"
 #include "Sound.h"
 #include "DAC.h"
+#include "Timer1.h"
+#define NVIC_ST_CTRL_R      (*((volatile unsigned long *)0xE000E010))
+#define NVIC_ST_RELOAD_R    (*((volatile unsigned long *)0xE000E014))
+#define NVIC_ST_CURRENT_R   (*((volatile unsigned long *)0xE000E018)) 
+
+int sinArray[32] = {8, 9, 11, 12, 13, 14, 14, 15, 15, 15, 14, 14, 13, 12, 11, 9, 8, 7 , 5, 4, 3, 2 , 2, 1, 1, 1, 2, 2, 3, 4, 5, 7 } ;
+int i = 0 ;
+int data = 0 ;	
+extern int t ;	
 
 const uint8_t shoot[4080] = {
   129, 99, 103, 164, 214, 129, 31, 105, 204, 118, 55, 92, 140, 225, 152, 61, 84, 154, 184, 101, 
@@ -1045,6 +1055,8 @@ const uint8_t fastinvader4[1098] = {
   116, 111, 105, 111, 116, 111, 111, 116, 111, 116, 111, 111, 116, 111, 116, 111, 105, 116};
 
 const uint8_t highpitch[1802] = {
+	
+	
   255, 162, 102, 101, 46, 7, 47, 59, 111, 150, 160, 176, 163, 226, 220, 199, 157, 120, 74, 95, 
   31, 13, 47, 64, 116, 155, 162, 171, 181, 246, 207, 194, 142, 102, 84, 70, 8, 31, 53, 92, 
   138, 156, 174, 162, 223, 226, 201, 167, 124, 79, 95, 18, 18, 47, 71, 119, 154, 170, 159, 206, 
@@ -1138,11 +1150,12 @@ const uint8_t highpitch[1802] = {
   250, 207};
 
 void Sound_Init(void){
-// write this
+	Timer1_Init() ;
 };
-void Sound_Play(const uint8_t *pt, uint32_t count){
-// write this
-};
+void Sound_Play(uint8_t* song, int count){
+	GPIO_PORTB_DATA_R = song[count]/16 ;	
+
+}
 void Sound_Shoot(void){
 // write this
 };

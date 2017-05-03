@@ -47,4 +47,3 @@ uint32_t ADC_x(uint32_t input){
 	uint32_t x = (result/31.445); // to make x value
 	return (x);
 }
-

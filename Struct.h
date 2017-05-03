@@ -1,9 +1,10 @@
 void Delay100ms(int count);
-void newplat_init(void);
-void print_plat(void);
-void task_down(void);
-void scoring(void);
-void start(void);
-void pl_move(void);
-void pl_jump(void);
-int gameover(void);
+void startscreen(void);
+void gameover(void);
+void pollen_attack(void);
+void beeprint(void);
+void beemove(void);
+void draw_flowers(void);
+void beejump(void);
+void shootSound(void);
+
