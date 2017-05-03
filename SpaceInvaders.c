@@ -64,7 +64,17 @@ void GPIO_PortE_Init(void){volatile unsigned long delay;
 	GPIO_PORTE_AFSEL_R &= ~(0x11); 	// 
 }
 uint32_t lvl1time = 0;
-
+int main2(void){
+	DisableInterrupts();
+	DAC_Init();
+	Sound_Init();
+	//Timer1_Init();
+	EnableInterrupts();
+	shootSound();
+	while(1){
+	
+	}
+}
 int main(void){
 	
 	DisableInterrupts();
@@ -77,22 +87,14 @@ int main(void){
 	ST7735_FillScreen(0xEED3);            // set screen to blue
 	startscreen();
   Delay100ms(90); 
-	Timer1_Init();
-	ST7735_FillScreen(0xEED3); 
 	SysTick_Init(10000);
+	//Timer1_Init();
+	ST7735_FillScreen(0xEED3);
 	EnableInterrupts();
 	
+	uint32_t lvl1timer = 0;
 	while(1){
-		shootSound();
-	}
-	shootSound();
-}
-uint32_t lvl1timer = 0;
-
-//************ISR***********//
-void SysTick_Handler(void){
-	beemove();
-	beeprint();
+		beeprint();
 	draw_flowers();
 	if((GPIO_PORTE_DATA_R &= 0x10) == 0x10){
 		pollen_attack();
@@ -105,4 +107,29 @@ void SysTick_Handler(void){
 	if((GPIO_PORTE_DATA_R &= 0x01) == 0x01){
 		beejump();
 	}
+	}
+
+
 }
+//uint32_t lvl1timer = 0;
+
+//************ISR***********//
+void SysTick_Handler(void){
+	beemove();
+//	beeprint();
+//	draw_flowers();
+//	if((GPIO_PORTE_DATA_R &= 0x10) == 0x10){
+//		pollen_attack();
+//		lvl1timer++;
+//		if(lvl1timer == 15){
+//			DisableInterrupts();
+//			gameover();
+//		}		
+//	}
+//	if((GPIO_PORTE_DATA_R &= 0x01) == 0x01){
+//		beejump();
+//	}
+//}
+}
+
+

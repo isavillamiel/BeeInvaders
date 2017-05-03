@@ -46,11 +46,12 @@ void Timer1_Init(){
   TIMER1_CTL_R = 0x00000000;    // 1) disable TIMER1A during setup
   TIMER1_CFG_R = 0x00000000;    // 2) configure for 32-bit mode
   TIMER1_TAMR_R = 0x00000002;   // 3) configure for periodic mode, default down-count settings
-  TIMER1_TAILR_R = 4400;    // 4) reload value
+  TIMER1_TAILR_R = 4400;    // 4) reload value 4400
   TIMER1_TAPR_R = 0;            // 5) bus clock resolution
   TIMER1_ICR_R = 0x00000001;    // 6) clear TIMER1A timeout flag
   TIMER1_IMR_R = 0x00000001;    // 7) arm timeout interrupt
-  NVIC_PRI5_R = (NVIC_PRI5_R&0xFFFF00FF)|0x00008000; // 8) priority 4
+  // NVIC_PRI5_R = (NVIC_PRI5_R&0xFFFF00FF)|0x20000000; // 8) priority 4
+	NVIC_PRI5_R = (NVIC_PRI5_R&0xFFFF00FF)|0x00008000; // 8) priority 4
   NVIC_EN0_R = 1<<21;           // 9) enable IRQ 21 in NVIC
   TIMER1_CTL_R = 0x00000001;    // 10) enable TIMER1A
 	TIMER1_CTL_R = 0x00000000;    // 1) disable TIMER1A during setup
@@ -59,6 +60,7 @@ void Timer1_Init(){
 void Timer1A_Handler(){
   TIMER1_ICR_R = TIMER_ICR_TATOCINT;// acknowledge TIMER1A timeout
 	//t = 0 ;
+	//temp = 0;
 	if (t == temp+1 ) {
 		TIMER1_CTL_R = 0x00000000 ; 
 		temp = 0 ;

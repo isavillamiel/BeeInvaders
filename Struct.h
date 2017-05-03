@@ -7,4 +7,6 @@ void beemove(void);
 void draw_flowers(void);
 void beejump(void);
 void shootSound(void);
-
+void explosionSound(void);
+void highpitchSound(void);
+void invaderkilledSound(void);

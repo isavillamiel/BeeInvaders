@@ -7,16 +7,40 @@
 #include "tm4c123gh6pm.h"
 #include "Timer1.h"
 
-uint8_t* song ;
-extern uint8_t shoot ;
+const uint8_t* song ;
+extern const uint8_t shoot[4080];
+extern const uint8_t explosion[2000];
+extern const uint8_t highpitch[1802];
+extern const uint8_t invaderkilled[3377];
+
+
 extern int t ;
+extern int temp;
 
 void shootSound() {
-	TIMER1_CTL_R = 0x00000001;  
-	song = &shoot ;
+	song = shoot ;
+	temp = 0;
 	t = 4080 ;
+	TIMER1_CTL_R = 0x00000001;  
 }
-
+void explosionSound(){
+	song = explosion;
+	temp = 0;
+	t = 2000;
+	TIMER1_CTL_R = 0x00000001;  
+}
+void highpitchSound(){
+	song = highpitch;
+	temp = 0;
+	t = 1802;
+	TIMER1_CTL_R = 0x00000001;  
+}
+void invaderkilledSound(){
+	song = invaderkilled;
+	temp = 0;
+	t = 3377;
+	TIMER1_CTL_R = 0x00000001;  
+}
 
 void Delay100ms(uint32_t count){uint32_t volatile time;
   while(count>0){
@@ -752,8 +776,7 @@ void beemove(void){
 	bee[0].x = ADC_x(ADC_In());
 }
 void beejump(void){
-	shootSound();
-	
+	explosionSound();
 	bee[0].y -= 1;
 	ST7735_DrawBitmap(bee[0].x, bee[0].y, barry, 39, 47);
 	Delay100ms(1);
@@ -796,11 +819,11 @@ void iflowers (void){ // 1
   if (flowers1[i].hp != 0){
     ST7735_DrawBitmap(flowers1[i].x, flowers1[i].y, flowers1[i].image, 24, 24);
   }
-  else{
+  else{highpitchSound();
 		if(flowers2[i].hp == 0 && flowers3[i].hp != 0){
 			ST7735_DrawBitmap(flowers3[i].x, flowers3[i].y, flowers3[i].image, 24, 24);
 		}
-		else{
+		else{highpitchSound();
 			ST7735_DrawBitmap(flowers2[i].x, flowers2[i].y, flowers2[i].image, 24, 24);
 		}
 	}
@@ -813,11 +836,11 @@ void jflowers (void){ // 2
   if (flowers1[j].hp != 0){
     ST7735_DrawBitmap(flowers1[j].x, flowers1[j].y, flowers1[j].image, 24, 24);
   }
-  else{
+  else{highpitchSound();
 		if(flowers2[j].hp == 0 && flowers3[j].hp != 0){
 			ST7735_DrawBitmap(flowers3[j].x, flowers3[j].y, flowers3[j].image, 24, 24);
 		}
-		else{
+		else{highpitchSound();
 			ST7735_DrawBitmap(flowers2[j].x, flowers2[j].y, flowers2[j].image, 24, 24);
 		}
 	}
@@ -830,11 +853,11 @@ void kflowers (void){ // 3
   if (flowers1[k].hp != 0){
     ST7735_DrawBitmap(flowers1[k].x, flowers1[k].y, flowers1[k].image, 24, 24);
   }
-  else{
+  else{highpitchSound();
 		if(flowers2[k].hp == 0 && flowers3[k].hp != 0){
 			ST7735_DrawBitmap(flowers3[k].x, flowers3[k].y, flowers3[k].image, 24, 24);
 		}
-		else{
+		else{highpitchSound();
 			ST7735_DrawBitmap(flowers2[k].x, flowers2[k].y, flowers2[k].image, 24, 24);
 		}
 	}
@@ -848,11 +871,11 @@ void lflowers (void){ // 4
   if (flowers1[l].hp != 0){
     ST7735_DrawBitmap(flowers1[l].x, flowers1[l].y, flowers1[l].image, 24, 24);
   }
-  else{
+  else{highpitchSound();
 		if(flowers2[l].hp == 0 && flowers3[l].hp != 0){
 			ST7735_DrawBitmap(flowers3[l].x, flowers3[l].y, flowers3[l].image, 24, 24);
 		}
-		else{
+		else{highpitchSound();
 			ST7735_DrawBitmap(flowers2[l].x, flowers2[l].y, flowers2[l].image, 24, 24);
 		}
 	}
@@ -865,11 +888,11 @@ void mflowers (void){ // 5
   if (flowers1[m].hp != 0){
     ST7735_DrawBitmap(flowers1[m].x, flowers1[m].y, flowers1[m].image, 24, 24);
   }
-  else{
+  else{highpitchSound();
 		if(flowers2[m].hp == 0 && flowers3[m].hp != 0){
 			ST7735_DrawBitmap(flowers3[m].x, flowers3[m].y, flowers3[m].image, 24, 24);
 		}
-		else{
+		else{highpitchSound();
 			ST7735_DrawBitmap(flowers2[m].x, flowers2[m].y, flowers2[m].image, 24, 24);
 		}
 	}
@@ -987,8 +1010,6 @@ void pollen_attack(void){
 
 void draw_flowers(void){ 
 	
-	shootSound();
-	
 	int i = 0;
 	int j = 1;
 	int k = 2;
@@ -1008,7 +1029,7 @@ void draw_flowers(void){
 	
 //*******SCREENS*******
 void startscreen(void){
-	shootSound();
+	
 		ST7735_DrawBitmap(0, 12, cherry2, 24,24);
 		ST7735_DrawBitmap(24, 12, cherry2, 24,24);
 		ST7735_DrawBitmap(52, 12, cherry2, 24,24);
@@ -1089,7 +1110,7 @@ void startscreen(void){
 	
 	
 void gameover(void){
-	shootSound();
+	invaderkilledSound();
 	
 	int i = 0; int j =1; int k =2; int l =3; int m = 4;
 	int	score = 0;
@@ -1190,5 +1211,4 @@ void gameover(void){
 		
  // ask danny how to output score
 	
-	
-}
+	}
